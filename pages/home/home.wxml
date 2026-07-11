@@ -1,0 +1,62 @@
+<scroll-view scroll-y class="home">
+  <view class="user-bar">
+    <view class="user-info" bindtap="openProfile">
+      <view class="avatar">{{uname[0]}}</view>
+      <text class="uname">{{uname}}</text>
+    </view>
+    <button wx:if="{{loggedIn}}" class="logout-btn" size="mini" bindtap="doLogout">退出</button>
+    <button wx:else class="login-btn" size="mini" bindtap="goLogin">登录</button>
+  </view>
+
+  <!-- 游客提示 -->
+  <view class="guest-tip" wx:if="{{!loggedIn}}">
+    <text class="guest-icon">👋</text>
+    <text class="guest-text">登录后可查看和管理采购记录</text>
+    <button class="guest-login-btn" bindtap="goLogin">登录 / 注册</button>
+  </view>
+
+  <view class="stat-row">
+    <view class="stat-card st-total">
+      <text class="num">{{loggedIn ? stats.total : '-'}}</text>
+      <text class="lab">合计</text>
+    </view>
+    <view class="stat-card stat-card-last st-total">
+      <text class="num">{{loggedIn ? stats.balance : '-'}}</text>
+      <text class="lab">净额</text>
+    </view>
+  </view>
+
+  <view class="actions">
+    <button class="act-btn act-add" bindtap="goAdd">新增</button>
+    <button class="act-btn act-btn-last act-exp" bindtap="doExport">导出</button>
+  </view>
+
+  <view class="filter-bar" wx:if="{{loggedIn}}">
+    <label class="all-check"><checkbox checked="{{showAll}}" bindtap="toggleAll" />全部</label>
+    <picker range="{{years}}" value="{{yearIdx}}" bindchange="onYear" disabled="{{showAll}}">
+      <view class="fsel {{showAll ? 'fsel-dis' : ''}}">{{selYear || '年'}}</view>
+    </picker>
+    <picker range="{{months}}" value="{{monthIdx}}" bindchange="onMonth" disabled="{{showAll}}">
+      <view class="fsel {{showAll ? 'fsel-dis' : ''}}">{{selMonth || '月'}}</view>
+    </picker>
+  </view>
+
+  <view class="search-bar" wx:if="{{loggedIn}}">
+    <input class="s-input" placeholder="搜索" value="{{keyword}}" bindinput="onKeyword" bindconfirm="doSearch" />
+    <button class="s-btn" size="mini" bindtap="doSearch">搜索</button>
+  </view>
+
+  <view class="list" wx:if="{{loggedIn && list.length}}">
+    <view class="item" wx:for="{{list}}" wx:key="id" bindtap="openDetail" data-id="{{item.id}}">
+      <view class="i-body">
+        <text class="i-name">{{item.product_name}}</text>
+        <text class="i-meta">{{item.supplier}} {{item.category}} {{item.order_date}}</text>
+      </view>
+      <view class="i-right">
+        <text class="i-amount">{{item.total_amount}}</text>
+        <text class="i-status {{item.statusClass}}">{{item.status}}</text>
+      </view>
+    </view>
+  </view>
+  <view wx:elif="{{loggedIn}}" class="empty">暂无记录</view>
+</scroll-view>

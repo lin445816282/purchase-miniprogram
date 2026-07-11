@@ -1,0 +1,22 @@
+<view class="login">
+  <view class="card">
+    <text class="title">采购记录</text>
+    <text class="sub">手机号登录 / 注册</text>
+    <view class="field">
+      <text class="label">手机号</text>
+      <input class="input" type="number" maxlength="11" placeholder="输入手机号" value="{{phone}}" bindinput="onPhone" />
+    </view>
+    <view class="field">
+      <text class="label">密码</text>
+      <input class="input" type="password" placeholder="输入密码" value="{{password}}" bindinput="onPwd" />
+    </view>
+    <view class="agree" bindtap="toggleAgree">
+      <view class="cb {{agreed ? 'cb-on' : ''}}">{{agreed ? '✓' : ''}}</view>
+      <text class="agree-text">我已阅读并同意</text>
+      <text class="link" catchtap="openAgreement">《用户服务协议》</text>
+      <text class="agree-text">和</text>
+      <text class="link" catchtap="openPrivacy">《隐私政策》</text>
+    </view>
+    <button class="btn {{agreed ? '' : 'btn-dis'}}" loading="{{loading}}" bindtap="doLogin">登录/注册</button>
+  </view>
+</view>

@@ -1,0 +1,6 @@
+.policy { padding:40rpx 32rpx; min-height:100vh; background:#fff; width:100%; overflow-x:hidden; }
+.content { max-width:100%; }
+.title { font-size:40rpx; font-weight:700; display:block; text-align:center; margin-bottom:12rpx; }
+.date { font-size:24rpx; color:#999; display:block; text-align:center; margin-bottom:40rpx; }
+.h2 { font-size:30rpx; font-weight:700; display:block; margin:32rpx 0 16rpx; }
+.p { font-size:28rpx; color:#333; display:block; line-height:48rpx; margin-bottom:12rpx; }

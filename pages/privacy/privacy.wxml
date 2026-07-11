@@ -1,0 +1,39 @@
+<scroll-view scroll-y class="policy">
+  <view class="content">
+    <text class="title" user-select="{{true}}">隐私政策</text>
+    <text class="date" user-select="{{true}}">更新日期：2026年07月10日</text>
+    
+    <text class="h2" user-select="{{true}}">一、信息收集</text>
+    <text class="p" user-select="{{true}}">本小程序【随手采购助手】（以下简称"我们"）在您使用服务时，仅收集以下必要信息：</text>
+    <text class="p" user-select="{{true}}">1. 手机号码：用于账号注册、登录和身份识别；</text>
+    <text class="p" user-select="{{true}}">2. 密码：用于账号安全验证，以加密形式存储；</text>
+    <text class="p" user-select="{{true}}">3. 采购数据：您主动录入的产品名称、金额、分类、供应商、日期等信息，用于提供采购记录管理服务。</text>
+
+    <text class="h2" user-select="{{true}}">二、信息使用</text>
+    <text class="p" user-select="{{true}}">我们收集的信息仅用于以下目的：</text>
+    <text class="p" user-select="{{true}}">1. 为您提供采购记录管理、统计、导出等核心功能；</text>
+    <text class="p" user-select="{{true}}">2. 保障账号安全，验证用户身份；</text>
+    <text class="p" user-select="{{true}}">3. 改进和优化服务质量。</text>
+
+    <text class="h2" user-select="{{true}}">三、信息存储</text>
+    <text class="p" user-select="{{true}}">1. 您的数据存储在我们的安全服务器上，采用加密传输（HTTPS）保护；</text>
+    <text class="p" user-select="{{true}}">2. 密码以不可逆加密（bcrypt）形式存储，任何人无法还原；</text>
+    <text class="p" user-select="{{true}}">3. 我们采取合理的安全措施保护您的信息免遭未经授权的访问。</text>
+
+    <text class="h2" user-select="{{true}}">四、信息共享</text>
+    <text class="p" user-select="{{true}}">我们承诺：</text>
+    <text class="p" user-select="{{true}}">1. 不会将您的个人信息出售给任何第三方；</text>
+    <text class="p" user-select="{{true}}">2. 不会将您的采购数据共享给任何第三方；</text>
+    <text class="p" user-select="{{true}}">3. 除法律法规要求外，不会向第三方披露您的信息。</text>
+
+    <text class="h2" user-select="{{true}}">五、用户权利</text>
+    <text class="p" user-select="{{true}}">您有权：</text>
+    <text class="p" user-select="{{true}}">1. 随时查看和修改您的个人信息；</text>
+    <text class="p" user-select="{{true}}">2. 删除您的账号及所有关联数据；</text>
+    <text class="p" user-select="{{true}}">3. 导出您的采购数据。</text>
+
+    <text class="h2" user-select="{{true}}">六、联系我们</text>
+    <text class="p" user-select="{{true}}">如对本隐私政策有任何疑问，请联系开发者。</text>
+    <text class="p" user-select="{{true}}">联系邮箱：lin445816282@163.com</text>
+  </view>
+</scroll-view>

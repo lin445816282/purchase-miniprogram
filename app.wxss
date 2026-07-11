@@ -1,0 +1,2 @@
+page { width:100%; overflow-x:hidden; }
+view,scroll-view,text,input,button,picker,label { box-sizing:border-box; }

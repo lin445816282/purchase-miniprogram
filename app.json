@@ -1,0 +1,15 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/login/login",
+    "pages/edit/edit",
+    "pages/agreement/agreement",
+    "pages/privacy/privacy"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#1989fa",
+    "navigationBarTitleText": "随手采购助手",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f7f8fa"
+  }
+}

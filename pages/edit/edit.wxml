@@ -1,0 +1,72 @@
+<scroll-view scroll-y class="edit">
+  <view class="form">
+    <view class="field">
+      <text class="label">名称</text>
+      <input class="input" placeholder="产品名" value="{{form.product_name}}" bindinput="onField" data-key="product_name" />
+    </view>
+    <view class="sugbox" wx:if="{{showSuggest && suggestions.length}}">
+      <view class="sug-item" wx:for="{{suggestions}}" wx:key="name" bindtap="selectProduct" data-name="{{item.name}}">{{item.name}}</view>
+    </view>
+
+    <view class="row2">
+      <view class="field fhalf">
+        <text class="label">单价</text>
+        <input class="input" type="digit" placeholder="0.00" value="{{form.unit_price}}" bindinput="onField" data-key="unit_price" />
+      </view>
+      <view class="field fhalf">
+        <text class="label">数量</text>
+        <input class="input" type="number" placeholder="1" value="{{form.quantity}}" bindinput="onField" data-key="quantity" />
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="label">总额</text>
+      <text class="total">{{totalAmount}}</text>
+    </view>
+
+    <view class="field" bindtap="showCatPicker">
+      <text class="label">分类</text>
+      <text class="val">{{form.category || '选'}}</text>
+    </view>
+
+    <view class="field">
+      <text class="label">日期</text>
+      <picker mode="date" value="{{form.order_date}}" bindchange="onDate">
+        <view class="val">{{form.order_date || '选'}}</view>
+      </picker>
+    </view>
+
+    <view class="field">
+      <text class="label">供应商</text>
+      <input class="input" placeholder="供应商" value="{{form.supplier}}" bindinput="onField" data-key="supplier" />
+    </view>
+
+    <view class="field">
+      <text class="label">采购人</text>
+      <input class="input" placeholder="采购人" value="{{form.purchaser}}" bindinput="onField" data-key="purchaser" />
+    </view>
+
+    <view class="field" bindtap="showStatusPicker">
+      <text class="label">状态</text>
+      <text class="val">{{form.status || '选'}}</text>
+    </view>
+
+    <button class="save-btn" loading="{{saving}}" bindtap="doSave">{{isEdit ? '保存' : '新增'}}</button>
+  </view>
+</scroll-view>
+
+<view class="overlay" wx:if="{{showCat}}" catchtap="hideCat">
+  <view class="picker-pop" catchtap="nop">
+    <text class="pk-title">分类</text>
+    <view class="pk-item {{form.category === item ? 'pk-active' : ''}}" wx:for="{{categories}}" wx:key="*this" bindtap="pickCat" data-val="{{item}}">{{item}}</view>
+    <button class="pk-cancel" bindtap="hideCat">取消</button>
+  </view>
+</view>
+
+<view class="overlay" wx:if="{{showStatus}}" catchtap="hideStatus">
+  <view class="picker-pop" catchtap="nop">
+    <text class="pk-title">状态</text>
+    <view class="pk-item {{form.status === item ? 'pk-active' : ''}}" wx:for="{{statuses}}" wx:key="*this" bindtap="pickStatus" data-val="{{item}}">{{item}}</view>
+    <button class="pk-cancel" bindtap="hideStatus">取消</button>
+  </view>
+</view>

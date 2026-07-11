@@ -1,0 +1,19 @@
+.edit { background-color:#f7f8fa; min-height:100vh; width:100%; overflow-x:hidden; }
+.form { padding:20rpx 24rpx 60rpx; }
+.field { background-color:#fff; border-radius:20rpx; padding:24rpx 28rpx; margin-bottom:16rpx; display:flex; align-items:center; overflow:hidden; }
+.fhalf { flex:1; min-width:0; }
+.label { font-size:28rpx; color:#333; width:120rpx; flex-shrink:0; }
+.input { flex:1; min-width:0; font-size:28rpx; }
+.val { flex:1; min-width:0; font-size:28rpx; color:#333; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.total { flex:1; min-width:0; font-size:36rpx; font-weight:700; color:#ee0a24; overflow:hidden; text-overflow:ellipsis; }
+.row2 { display:flex; }
+.row2 .field:first-child { margin-right:12rpx; }
+.sugbox { background-color:#fff; border-radius:20rpx; margin-bottom:16rpx; overflow:hidden; }
+.sug-item { padding:24rpx 28rpx; border-bottom:1px solid #f5f5f5; font-size:28rpx; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.save-btn { background-color:#1989fa; color:#fff; border-radius:48rpx; font-size:32rpx; font-weight:600; margin-top:32rpx; }
+.overlay { position:fixed; top:0; left:0; right:0; bottom:0; background-color:rgba(0,0,0,.5); z-index:100; display:flex; align-items:flex-end; }
+.picker-pop { background-color:#fff; border-radius:32rpx 32rpx 0 0; width:100%; padding:32rpx 28rpx; }
+.pk-title { font-size:32rpx; font-weight:600; display:block; text-align:center; margin-bottom:24rpx; }
+.pk-item { padding:24rpx; font-size:28rpx; text-align:center; border-radius:16rpx; margin-bottom:8rpx; background-color:#f7f8fa; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pk-active { background-color:rgba(25,137,250,.12); color:#1989fa; font-weight:600; }
+.pk-cancel { background-color:#f5f5f5; color:#999; border-radius:24rpx; font-size:28rpx; }

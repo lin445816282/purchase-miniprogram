@@ -1,0 +1,33 @@
+<scroll-view scroll-y class="policy">
+  <view class="content">
+    <text class="title" user-select="{{true}}">用户服务协议</text>
+    <text class="date" user-select="{{true}}">更新日期：2026年07月10日</text>
+    
+    <text class="h2" user-select="{{true}}">一、服务说明</text>
+    <text class="p" user-select="{{true}}">【随手采购助手】是一款面向个人及小团队的采购管理工具，提供采购记录录入、查询、统计、导出等功能。</text>
+    <text class="p" user-select="{{true}}">本协议是您与【随手采购助手】开发者之间关于使用本小程序服务所订立的协议。</text>
+
+    <text class="h2" user-select="{{true}}">二、账号注册</text>
+    <text class="p" user-select="{{true}}">1. 您需要使用手机号码注册账号，并自行保管账号密码；</text>
+    <text class="p" user-select="{{true}}">2. 您应对账号下的所有操作负责；</text>
+    <text class="p" user-select="{{true}}">3. 如发现账号异常，请及时联系开发者。</text>
+
+    <text class="h2" user-select="{{true}}">三、用户义务</text>
+    <text class="p" user-select="{{true}}">1. 不得利用本服务从事违法违规活动；</text>
+    <text class="p" user-select="{{true}}">2. 不得干扰本服务的正常运行；</text>
+    <text class="p" user-select="{{true}}">3. 您输入的采购数据应符合真实情况。</text>
+
+    <text class="h2" user-select="{{true}}">四、服务限制</text>
+    <text class="p" user-select="{{true}}">1. 本服务按"现状"提供，不保证完全无中断或错误；</text>
+    <text class="p" user-select="{{true}}">2. 我们保留因维护、升级等原因暂停服务的权利；</text>
+    <text class="p" user-select="{{true}}">3. 对于因不可抗力导致的服务中断，我们不承担责任。</text>
+
+    <text class="h2" user-select="{{true}}">五、免责声明</text>
+    <text class="p" user-select="{{true}}">1. 本工具仅提供采购记录管理功能，不构成任何投资或商业建议；</text>
+    <text class="p" user-select="{{true}}">2. 用户应自行备份重要数据，我们对数据丢失不承担责任；</text>
+    <text class="p" user-select="{{true}}">3. 我们对第三方服务（如微信平台）的可用性不承担责任。</text>
+
+    <text class="h2" user-select="{{true}}">六、协议修改</text>
+    <text class="p" user-select="{{true}}">我们有权在必要时修改本协议，修改后将在小程序内公示。继续使用即视为同意修改后的协议。</text>
+  </view>
+</scroll-view>
