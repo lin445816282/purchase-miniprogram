@@ -39,12 +39,14 @@ Page({
     var now = new Date()
     var years = []
     for (var i = 2; i >= -2; i--) years.push(now.getFullYear() + i)
+    this._lastSelYear = now.getFullYear()
+    this._lastSelMonth = now.getMonth() + 1
     this.setData({
       years: years,
-      selYear: now.getFullYear(),
-      selMonth: now.getMonth() + 1,
-      yearIdx: 2,
-      monthIdx: now.getMonth()
+      selYear: null,
+      selMonth: null,
+      yearIdx: 0,
+      monthIdx: 0
     })
   },
 
@@ -92,7 +94,6 @@ Page({
       })
     }).catch(function(e) {
       console.error('loadData error:', e)
-      that.setData({ loggedIn: false })
     })
   },
 
@@ -104,15 +105,38 @@ Page({
   },
 
   toggleAll: function() {
-    this.setData({ showAll: !this.data.showAll, page: 1 })
+    var showing = !this.data.showAll
+    if (showing) {
+      // 切到"全部"：保存当前筛选值，清空显示
+      this._lastSelYear = this.data.selYear
+      this._lastSelMonth = this.data.selMonth
+      this.setData({ showAll: true, page: 1, selYear: null, selMonth: null, yearIdx: 0, monthIdx: 0 })
+    } else {
+      // 切回筛选：恢复上次的筛选值
+      var now = new Date()
+      var y = this._lastSelYear || now.getFullYear()
+      var m = this._lastSelMonth || (now.getMonth() + 1)
+      var yi = this.data.years.indexOf(y)
+      if (yi < 0) yi = 2
+      this.setData({
+        showAll: false, page: 1,
+        selYear: y, selMonth: m,
+        yearIdx: yi, monthIdx: m - 1
+      })
+    }
     this.loadData()
   },
   onYear: function(e) {
-    this.setData({ selYear: this.data.years[e.detail.value], yearIdx: e.detail.value, page: 1 })
+    var idx = Number(e.detail.value)
+    var y = this.data.years[idx]
+    this._lastSelYear = y
+    this.setData({ selYear: y, yearIdx: idx, page: 1 })
     this.loadData()
   },
   onMonth: function(e) {
-    this.setData({ selMonth: e.detail.value + 1, monthIdx: e.detail.value, page: 1 })
+    var m = Number(e.detail.value) + 1
+    this._lastSelMonth = m
+    this.setData({ selMonth: m, monthIdx: Number(e.detail.value), page: 1 })
     this.loadData()
   },
 
@@ -265,6 +289,10 @@ Page({
   goAdd: function() { 
     if (!this.data.loggedIn) { wx.navigateTo({ url: '/pages/login/login' }); return }
     wx.navigateTo({ url: '/pages/edit/edit' }) 
+  },
+  goShares: function() {
+    if (!this.data.loggedIn) { wx.navigateTo({ url: '/pages/login/login' }); return }
+    wx.navigateTo({ url: '/pages/shares/shares' })
   },
   nop: function() {}
 })
