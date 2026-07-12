@@ -29,7 +29,7 @@ function request(method, path, data) {
           wx.removeStorageSync('phone')
           app.globalData.token = ''
           app.globalData.loggedIn = false
-          reject(new Error('未登录'))
+          reject({ statusCode: 401, data: res.data || {} })
         } else if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data)
         } else {

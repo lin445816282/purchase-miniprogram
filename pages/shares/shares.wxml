@@ -1,0 +1,73 @@
+<scroll-view scroll-y class="shares">
+  <!-- 添加关联 -->
+  <view class="section">
+    <view class="sec-title">添加关联</view>
+    <view class="s-field">
+      <input class="s-inp" placeholder="输入对方手机号" value="{{newPhone}}" bindinput="onNewPhone" />
+    </view>
+    <view class="perm-row">
+      <view class="perm-item {{newPerm=='read'?'perm-on':''}}" bindtap="setPerm" data-perm="read">仅查看</view>
+      <view class="perm-item {{newPerm=='write'?'perm-on':''}}" bindtap="setPerm" data-perm="write">可增加</view>
+      <view class="perm-item {{newPerm=='admin'?'perm-on':''}}" bindtap="setPerm" data-perm="admin">管理</view>
+    </view>
+    <view class="perm-hint">
+      <text class="hint hint-read">仅查看：只能看数据</text>
+      <text class="hint hint-write">可增加：查看+新增+修改</text>
+      <text class="hint hint-admin">管理：完全控制（含删除）</text>
+    </view>
+    <button class="add-btn" bindtap="doAdd" loading="{{adding}}">确 定</button>
+  </view>
+
+  <!-- 搜索用户 -->
+  <view class="section">
+    <view class="sec-title">搜索用户</view>
+    <view class="search-row">
+      <view class="s-field">
+        <input class="s-inp" placeholder="输入手机号或昵称" value="{{searchQ}}" bindinput="onSearchQ" />
+      </view>
+      <button class="s-btn" size="mini" bindtap="doSearch">搜索</button>
+    </view>
+    <view class="user-list" wx:if="{{searchResults.length}}">
+      <view class="user-item" wx:for="{{searchResults}}" wx:key="phone" bindtap="pickUser" data-phone="{{item.phone}}">
+        <text class="u-phone">{{item.phone}}</text>
+        <text class="u-nick" wx:if="{{item.nickname}}">{{item.nickname}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 我共享给别人的 -->
+  <view class="section">
+    <view class="sec-title">我共享给别人的 <text class="count">{{outgoing.length}}</text></view>
+    <view class="share-list" wx:if="{{outgoing.length}}">
+      <view class="share-item" wx:for="{{outgoing}}" wx:key="id">
+        <view class="si-left">
+          <text class="si-phone">{{item.phone}}</text>
+          <text class="si-nick" wx:if="{{item.nickname}}">{{item.nickname}}</text>
+        </view>
+        <picker range="{{perms}}" value="{{item.permIdx}}" bindchange="onPermChange" data-id="{{item.id}}" class="si-perm">
+          <view class="perm-val p-{{item.permission}}">{{item.permLabel}}</view>
+        </picker>
+        <view class="si-del" bindtap="doDelete" data-id="{{item.id}}" data-phone="{{item.phone}}">解除</view>
+      </view>
+    </view>
+    <view wx:else class="empty-tip">暂无</view>
+  </view>
+
+  <!-- 别人共享给我的 -->
+  <view class="section">
+    <view class="sec-title">别人共享给我的 <text class="count">{{incoming.length}}</text></view>
+    <view class="share-list" wx:if="{{incoming.length}}">
+      <view class="share-item inc" wx:for="{{incoming}}" wx:key="id">
+        <view class="si-left">
+          <text class="si-phone">{{item.phone}}</text>
+          <text class="si-nick" wx:if="{{item.nickname}}">{{item.nickname}}</text>
+        </view>
+        <view class="si-perm">
+          <view class="perm-val p-{{item.permission}}">{{item.permLabel}}</view>
+        </view>
+        <view class="si-del" bindtap="doDelete" data-id="{{item.id}}" data-phone="{{item.phone}}">解除</view>
+      </view>
+    </view>
+    <view wx:else class="empty-tip">暂无</view>
+  </view>
+</scroll-view>

@@ -3,6 +3,8 @@
     "pages/home/home",
     "pages/login/login",
     "pages/edit/edit",
+    "pages/shares/shares",
+    "pages/reset/reset",
     "pages/agreement/agreement",
     "pages/privacy/privacy"
   ],

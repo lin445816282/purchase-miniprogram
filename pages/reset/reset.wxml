@@ -1,0 +1,10 @@
+<view class="reset">
+  <view class="card">
+    <text class="title">忘记密码</text>
+    <text class="sub">暂不支持短信验证，请联系管理员重置密码</text>
+    <view class="info-box">
+      <text class="info-text">管理员可以在后台为用户重置密码</text>
+    </view>
+    <button class="btn" bindtap="goLogin">返回登录</button>
+  </view>
+</view>

@@ -47,8 +47,13 @@ Page({
         wx.navigateBack({ delta: 1 })
       })
       .catch(function(err) {
-        wx.showToast({ title: '登录失败', icon: 'none' })
+        var msg = (err && err.data && err.data.detail) || '登录失败'
+        wx.showToast({ title: msg, icon: 'none' })
         that.setData({ loading: false })
       })
+  },
+
+  goReset: function() {
+    wx.navigateTo({ url: '/pages/reset/reset' })
   }
 })
