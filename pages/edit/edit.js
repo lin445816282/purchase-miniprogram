@@ -20,6 +20,8 @@ Page({
     suggestTimer: null,
     uploading: false,
     uploadProgress: 0,
+    uploadMsg: '',
+    imageList: [],
     saving: false
   },
 
@@ -38,7 +40,11 @@ Page({
   loadPurchase: function(id) {
     var that = this
     request('GET', '/purchases/' + id).then(function(data) {
-      that.setData({ form: data })
+      var images = []
+      try { images = JSON.parse(data.receipt_images || '[]') } catch(e) {}
+      var IMG_BASE = 'https://www.ct256.cn'
+      var absImgs = images.map(function(u) { return u.startsWith('http') ? u : IMG_BASE + u })
+      that.setData({ form: data, imageList: absImgs })
       that.calcTotal()
     }).catch(function() {
       wx.showToast({ title: '加载失败', icon: 'none' })
@@ -49,7 +55,6 @@ Page({
   onField: function(e) {
     var key = e.currentTarget.dataset.key
     var val = e.detail.value
-    if (key === 'quantity' || key === 'unit_price') val = parseFloat(val) || 0
     var obj = {}
     obj['form.' + key] = val
     this.setData(obj)
@@ -78,7 +83,7 @@ Page({
   calcTotal: function() {
     var q = parseFloat(this.data.form.quantity) || 0
     var p = parseFloat(this.data.form.unit_price) || 0
-    this.setData({ totalAmount: (q * p).toFixed(2) })
+    this.setData({ totalAmount: (q * p).toFixed(3) })
   },
 
   onDate: function(e) { this.setData({ 'form.order_date': e.detail.value }) },
@@ -92,37 +97,91 @@ Page({
 
   chooseImg: function() {
     var that = this
+    var existingAbs = this.data.imageList
+    var IMG_BASE = 'https://www.ct256.cn'
+    var existingRel = existingAbs.map(function(u) {
+      return u.startsWith(IMG_BASE) ? u.slice(IMG_BASE.length) : u
+    })
+    var remain = 9 - existingAbs.length
+    if (remain <= 0) {
+      wx.showToast({ title: '最多9张图片', icon: 'none' })
+      return
+    }
     wx.chooseMedia({
-      count: 1,
+      count: remain,
       mediaType: ['image'],
       success: function(res) {
-        var file = res.tempFiles[0]
-        that.setData({ uploading: true, uploadProgress: 0 })
-        var task = wx.uploadFile({
-          url: BASE + '/upload',
-          filePath: file.tempFilePath,
-          name: 'file',
-          header: { Authorization: 'Bearer ' + (getApp().globalData.token || '') },
-          success: function(res) {
-            try {
-              var data = JSON.parse(res.data)
-              that.setData({ 'form.receipt_image': data.url, uploadProgress: 100 })
-            } catch (e) {
-              wx.showToast({ title: '上传失败', icon: 'none' })
+        var files = res.tempFiles
+        if (!files || !files.length) return
+        that.setData({ uploading: true, uploadProgress: 0, uploadMsg: '准备上传...' })
+        var total = files.length
+        var done = 0
+        var urls = []
+        var fs = wx.getFileSystemManager()
+        var uploadOne = function(i) {
+          if (i >= total) {
+            var relUrls = urls.map(function(u) {
+              return u.replace('https://www.ct256.cn', '')
+            })
+            var allRel = existingRel.concat(relUrls)
+            var allAbs = existingAbs.concat(urls)
+            that.setData({ imageList: allAbs, 'form.receipt_images': JSON.stringify(allRel), uploadProgress: 100, uploadMsg: '上传完成' })
+            setTimeout(function() { that.setData({ uploading: false }) }, 500)
+            return
+          }
+          var file = files[i]
+          that.setData({ uploadMsg: '上传中 ' + (i + 1) + '/' + total })
+          fs.readFile({
+            filePath: file.tempFilePath,
+            encoding: 'base64',
+            success: function(readRes) {
+              var base64 = 'data:' + (file.fileType || 'image/jpeg') + ';base64,' + readRes.data
+              wx.request({
+                url: BASE + '/upload-base64',
+                method: 'POST',
+                header: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (getApp().globalData.token || '') },
+                data: { images: [base64] },
+                success: function(reqRes) {
+                  if (reqRes.statusCode === 200 && reqRes.data.urls && reqRes.data.urls.length) {
+                    var absUrls = reqRes.data.urls.map(function(u) { return u.startsWith('http') ? u : IMG_BASE + u })
+                    urls = urls.concat(absUrls)
+                  }
+                },
+                fail: function(err) { console.error('upload fail', err) },
+                complete: function() {
+                  done++
+                  that.setData({ uploadProgress: Math.min(99, Math.round(done / total * 100)) })
+                  uploadOne(i + 1)
+                }
+              })
+            },
+            fail: function(err) {
+              console.error('readFile fail', err)
+              done++
+              uploadOne(i + 1)
             }
-          },
-          fail: function() { wx.showToast({ title: '上传失败', icon: 'none' }) },
-          complete: function() { setTimeout(function() { that.setData({ uploading: false }) }, 500) }
-        })
-        task.onProgressUpdate(function(res) {
-          that.setData({ uploadProgress: Math.min(99, res.progress) })
-        })
+          })
+        }
+        uploadOne(0)
       }
     })
   },
 
-  removeImg: function() { this.setData({ 'form.receipt_image': '' }) },
-  previewImg: function() { wx.previewImage({ urls: [this.data.form.receipt_image] }) },
+  removeImg: function(e) {
+    var idx = e.currentTarget.dataset.idx
+    var absImgs = this.data.imageList.slice()
+    var IMG_BASE = 'https://www.ct256.cn'
+    absImgs.splice(idx, 1)
+    var relImgs = absImgs.map(function(u) {
+      return u.startsWith(IMG_BASE) ? u.slice(IMG_BASE.length) : u
+    })
+    this.setData({ imageList: absImgs, 'form.receipt_images': JSON.stringify(relImgs) })
+  },
+  previewImgs: function(e) {
+    var idx = e.currentTarget.dataset.idx
+    var imgs = this.data.imageList
+    wx.previewImage({ urls: imgs, current: imgs[idx] })
+  },
 
   doSave: function() {
     var that = this
@@ -133,8 +192,10 @@ Page({
     this.setData({ saving: true })
     var payload = {}
     for (var k in f) { payload[k] = f[k] }
-    if (!payload.quantity || isNaN(payload.quantity)) payload.quantity = 0
-    if (!payload.unit_price || isNaN(payload.unit_price)) payload.unit_price = 0
+    var qty = parseFloat(payload.quantity)
+    var upr = parseFloat(payload.unit_price)
+    payload.quantity = isNaN(qty) ? 0 : qty
+    payload.unit_price = isNaN(upr) ? 0 : upr
 
     var promise
     if (this.data.isEdit) {

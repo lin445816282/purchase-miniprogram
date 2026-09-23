@@ -12,3 +12,5 @@
 .link { font-size:24rpx; color:#1989fa; }
 .btn { margin-top:8rpx; background-color:#1989fa; color:#fff; border-radius:48rpx; font-size:32rpx; font-weight:600; }
 .btn-dis { opacity:0.45; }
+.extra-links { margin-top:24rpx; }
+.err-msg { color:#ee0a24; font-size:24rpx; margin-top:12rpx; display:block; text-align:center; }

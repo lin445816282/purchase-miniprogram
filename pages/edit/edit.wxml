@@ -11,11 +11,11 @@
     <view class="row2">
       <view class="field fhalf">
         <text class="label">单价</text>
-        <input class="input" type="digit" placeholder="0.00" value="{{form.unit_price}}" bindinput="onField" data-key="unit_price" />
+        <input class="input" type="digit" placeholder="0.000" value="{{form.unit_price}}" bindinput="onField" data-key="unit_price" />
       </view>
       <view class="field fhalf">
         <text class="label">数量</text>
-        <input class="input" type="number" placeholder="1" value="{{form.quantity}}" bindinput="onField" data-key="quantity" />
+        <input class="input" type="digit" placeholder="1" value="{{form.quantity}}" bindinput="onField" data-key="quantity" />
       </view>
     </view>
 
@@ -49,6 +49,31 @@
     <view class="field" bindtap="showStatusPicker">
       <text class="label">状态</text>
       <text class="val">{{form.status || '选'}}</text>
+    </view>
+
+    <view class="field">
+      <text class="label">备注</text>
+      <input class="input" placeholder="备注" value="{{form.remark}}" bindinput="onField" data-key="remark" />
+    </view>
+
+    <view class="upload-section">
+      <text class="up-label">票据图片（{{imageList.length}}/9）</text>
+      <view class="up-grid">
+        <view class="up-item" wx:for="{{imageList}}" wx:key="*this" bindtap="previewImgs" data-idx="{{index}}">
+          <image class="up-img" src="{{item}}" mode="aspectFill" />
+          <view class="up-remove" catchtap="removeImg" data-idx="{{index}}">✕</view>
+        </view>
+        <view class="up-add" wx:if="{{imageList.length < 9}}" bindtap="chooseImg">
+          <text class="up-add-icon">+</text>
+        </view>
+      </view>
+      <view class="up-progress" wx:if="{{uploading}}">
+        <view class="up-bar-bg"><view class="up-bar" style="width:{{uploadProgress}}%"></view></view>
+        <view class="up-info">
+          <text class="up-msg">{{uploadMsg}}</text>
+          <text class="up-percent">{{uploadProgress}}%</text>
+        </view>
+      </view>
     </view>
 
     <button class="save-btn" loading="{{saving}}" bindtap="doSave">{{isEdit ? '保存' : '新增'}}</button>

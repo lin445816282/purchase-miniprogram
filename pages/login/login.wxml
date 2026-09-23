@@ -18,5 +18,8 @@
       <text class="link" catchtap="openPrivacy">《隐私政策》</text>
     </view>
     <button class="btn {{agreed ? '' : 'btn-dis'}}" loading="{{loading}}" bindtap="doLogin">登录/注册</button>
+    <view class="extra-links">
+      <text class="link" bindtap="goReset">忘记密码?</text>
+    </view>
   </view>
 </view>

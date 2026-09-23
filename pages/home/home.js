@@ -77,12 +77,21 @@ Page({
       var data = results[1]
       var inc = (s.income && s.income.amount) || 0
       var exp = (s.expense && s.expense.amount) || 0
-      var balance = (inc - exp).toFixed(2)
+      var balance = (inc - exp).toFixed(3)
       var stats = {}
       for (var k in s) { stats[k] = s[k] }
       stats.balance = balance
       var list = data.items.map(function(it) {
         it.statusClass = statusClass(it.status)
+        // Parse images — 兼容旧单图 receipt_image + 新多图 receipt_images
+        var imgs = []
+        try { imgs = JSON.parse(it.receipt_images || '[]') } catch(e) {}
+        if (!imgs.length && it.receipt_image) { imgs = [it.receipt_image] }
+        var IMG_BASE = 'https://www.ct256.cn'
+        imgs = imgs.map(function(u) { return u.startsWith('http') ? u : IMG_BASE + u })
+        it._firstImg = imgs.length > 0 ? imgs[0] : ''
+        it._thumbImg = it._firstImg ? it._firstImg.replace(/\.[^.]+$/, '_thumb.jpg') : ''
+        it._imgsJson = JSON.stringify(imgs)
         return it
       })
       that.setData({
@@ -160,9 +169,23 @@ Page({
     var id = e.currentTarget.dataset.id
     var that = this
     var item = this.data.list.find(function(i) { return i.id === id })
-    if (item) that.setData({ showDetail: true, detail: item })
+    if (item) {
+      var imgs = []
+      try { imgs = JSON.parse(item.receipt_images || '[]') } catch(e) {}
+      if (!imgs.length && item.receipt_image) { imgs = [item.receipt_image] }
+      var IMG_BASE = 'https://www.ct256.cn'
+      imgs = imgs.map(function(u) { return u.startsWith('http') ? u : IMG_BASE + u })
+      item._imgs = imgs
+      that.setData({ showDetail: true, detail: item })
+    }
   },
   closeDetail: function() { this.setData({ showDetail: false }) },
+
+  previewDetailImgs: function(e) {
+    var idx = e.currentTarget.dataset.idx
+    var imgs = this.data.detail._imgs || []
+    wx.previewImage({ urls: imgs, current: imgs[idx] })
+  },
   goEdit: function() {
     var id = this.data.detail.id
     this.setData({ showDetail: false })
@@ -208,6 +231,14 @@ Page({
 
   previewImg: function(e) { wx.previewImage({ urls: [e.currentTarget.dataset.url] }) },
 
+  previewListItemImgs: function(e) {
+    var imgs = []
+    try { imgs = JSON.parse(e.currentTarget.dataset.images || '[]') } catch(e) {}
+    if (imgs.length > 0) {
+      wx.previewImage({ urls: imgs, current: imgs[0] })
+    }
+  },
+
   doExport: function() {
     if (!this.data.loggedIn) { wx.navigateTo({ url: '/pages/login/login' }); return }
     var that = this
@@ -224,13 +255,22 @@ Page({
     }
     var qs = toQuery(params)
     var BASE = require('../../app').BASE
-    wx.downloadFile({
+    wx.request({
       url: BASE + '/export' + (qs ? '?' + qs : ''),
+      method: 'GET',
+      responseType: 'arraybuffer',
       header: { Authorization: 'Bearer ' + (getApp().globalData.token || '') },
       success: function(res) {
         wx.hideLoading()
         if (res.statusCode === 200) {
-          wx.openDocument({ filePath: res.tempFilePath, showMenu: true })
+          var fs = wx.getFileSystemManager()
+          var fp = wx.env.USER_DATA_PATH + '/purchases.xlsx'
+          fs.writeFile({
+            filePath: fp,
+            data: res.data,
+            success: function() { wx.openDocument({ filePath: fp, showMenu: true }) },
+            fail: function() { wx.showToast({ title: '保存失败', icon: 'none' }) }
+          })
         } else {
           wx.showToast({ title: '导出失败', icon: 'none' })
         }

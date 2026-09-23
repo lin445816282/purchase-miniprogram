@@ -4,7 +4,10 @@
       <view class="avatar">{{uname[0]}}</view>
       <text class="uname">{{uname}}</text>
     </view>
-    <button wx:if="{{loggedIn}}" class="logout-btn" size="mini" bindtap="doLogout">退出</button>
+    <view wx:if="{{loggedIn}}" class="user-actions">
+      <button class="share-btn" size="mini" bindtap="goShares">关联管理</button>
+      <button class="logout-btn" size="mini" bindtap="doLogout">退出</button>
+    </view>
     <button wx:else class="login-btn" size="mini" bindtap="goLogin">登录</button>
   </view>
 
@@ -26,6 +29,17 @@
     </view>
   </view>
 
+  <view class="stat-row">
+    <view class="stat-card st-income">
+      <text class="num">{{loggedIn ? stats.income.amount : '-'}}</text>
+      <text class="lab">收入 {{loggedIn ? stats.income.count : '-'}}笔</text>
+    </view>
+    <view class="stat-card stat-card-last st-expense">
+      <text class="num">{{loggedIn ? stats.expense.amount : '-'}}</text>
+      <text class="lab">支出 {{loggedIn ? stats.expense.count : '-'}}笔</text>
+    </view>
+  </view>
+
   <view class="actions">
     <button class="act-btn act-add" bindtap="goAdd">新增</button>
     <button class="act-btn act-btn-last act-exp" bindtap="doExport">导出</button>
@@ -34,20 +48,24 @@
   <view class="filter-bar" wx:if="{{loggedIn}}">
     <label class="all-check"><checkbox checked="{{showAll}}" bindtap="toggleAll" />全部</label>
     <picker range="{{years}}" value="{{yearIdx}}" bindchange="onYear" disabled="{{showAll}}">
-      <view class="fsel {{showAll ? 'fsel-dis' : ''}}">{{selYear || '年'}}</view>
+      <view class="fsel {{showAll ? 'fsel-dis' : ''}}">{{showAll ? '年' : (selYear || '年')}}</view>
     </picker>
     <picker range="{{months}}" value="{{monthIdx}}" bindchange="onMonth" disabled="{{showAll}}">
-      <view class="fsel {{showAll ? 'fsel-dis' : ''}}">{{selMonth || '月'}}</view>
+      <view class="fsel {{showAll ? 'fsel-dis' : ''}}">{{showAll ? '月' : (months[monthIdx] || '月')}}</view>
     </picker>
   </view>
 
   <view class="search-bar" wx:if="{{loggedIn}}">
-    <input class="s-input" placeholder="搜索" value="{{keyword}}" bindinput="onKeyword" bindconfirm="doSearch" />
+    <view class="s-field">
+      <input class="s-input" placeholder="搜索" value="{{keyword}}" bindinput="onKeyword" bindconfirm="doSearch" />
+    </view>
     <button class="s-btn" size="mini" bindtap="doSearch">搜索</button>
   </view>
 
   <view class="list" wx:if="{{loggedIn && list.length}}">
     <view class="item" wx:for="{{list}}" wx:key="id" bindtap="openDetail" data-id="{{item.id}}">
+      <image class="i-thumb" wx:if="{{item._thumbImg}}" src="{{item._thumbImg}}" mode="aspectFill" catchtap="previewListItemImgs" data-images="{{item._imgsJson}}" />
+      <view class="i-thumb i-thumb-empty" wx:else><text class="i-thumb-icon">📷</text></view>
       <view class="i-body">
         <text class="i-name">{{item.product_name}}</text>
         <text class="i-meta">{{item.supplier}} {{item.category}} {{item.order_date}}</text>
@@ -56,7 +74,57 @@
         <text class="i-amount">{{item.total_amount}}</text>
         <text class="i-status {{item.statusClass}}">{{item.status}}</text>
       </view>
+      <view class="i-del" catchtap="delItem" data-id="{{item.id}}" data-name="{{item.product_name}}">🗑</view>
     </view>
   </view>
   <view wx:elif="{{loggedIn}}" class="empty">暂无记录</view>
 </scroll-view>
+
+<!-- 详情弹窗 -->
+<view class="overlay" wx:if="{{showDetail}}" catchtap="closeDetail">
+  <view class="detail-pop" catchtap="nop">
+    <text class="dk-title">{{detail.product_name}}</text>
+    <text class="dk-amount">¥{{detail.total_amount}}</text>
+    <view class="dk-row"><text class="dk-label">单价</text><text class="dk-val">¥{{detail.unit_price}}</text></view>
+    <view class="dk-row"><text class="dk-label">数量</text><text class="dk-val">{{detail.quantity}}</text></view>
+    <view class="dk-row"><text class="dk-label">分类</text><text class="dk-val">{{detail.category || '-'}}</text></view>
+    <view class="dk-row"><text class="dk-label">日期</text><text class="dk-val">{{detail.order_date}}</text></view>
+    <view class="dk-row"><text class="dk-label">供应商</text><text class="dk-val">{{detail.supplier || '-'}}</text></view>
+    <view class="dk-row"><text class="dk-label">采购人</text><text class="dk-val">{{detail.purchaser || '-'}}</text></view>
+    <view class="dk-row"><text class="dk-label">状态</text><text class="dk-val"><text class="i-status {{detail.statusClass}}">{{detail.status}}</text></text></view>
+    <view class="dk-row" wx:if="{{detail.remark}}"><text class="dk-label">备注</text><text class="dk-val">{{detail.remark}}</text></view>
+    <view class="dk-imgs" wx:if="{{detail._imgs && detail._imgs.length}}">
+      <image class="dk-img" wx:for="{{detail._imgs}}" wx:key="*this" src="{{item}}" mode="aspectFill" bindtap="previewDetailImgs" data-idx="{{index}}" />
+    </view>
+    <view class="dk-actions">
+      <button class="dk-btn btn-danger" bindtap="delFromDetail">删除</button>
+      <button class="dk-btn btn-primary" bindtap="goEdit">编辑</button>
+      <button class="dk-btn btn-plain" bindtap="closeDetail">关闭</button>
+    </view>
+  </view>
+</view>
+
+<!-- 个人中心弹窗 -->
+<view class="overlay" wx:if="{{showProfile}}" catchtap="closeProfile">
+  <view class="profile-pop" catchtap="nop">
+    <text class="pk-title">个人中心</text>
+    <view class="field">
+      <text class="label">手机号</text>
+      <text class="val">{{uname}}</text>
+    </view>
+    <view class="field">
+      <text class="label">昵称</text>
+      <input class="input" placeholder="设置昵称" value="{{nickname}}" bindinput="onNick" />
+    </view>
+    <view class="field">
+      <text class="label">旧密码</text>
+      <input class="input" type="password" placeholder="修改密码需填" value="{{oldPwd}}" bindinput="onOldPwd" />
+    </view>
+    <view class="field">
+      <text class="label">新密码</text>
+      <input class="input" type="password" placeholder="新密码" value="{{newPwd}}" bindinput="onNewPwd" />
+    </view>
+    <button class="save-btn" loading="{{savingProfile}}" bindtap="saveProfile">保存</button>
+    <button class="cancel-btn" bindtap="closeProfile">取消</button>
+  </view>
+</view>
